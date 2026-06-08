@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.artshop.repository.ProductMapper">
+
+    <resultMap id="ProductResultMap" type="com.artshop.model.entity.Product">
+        <id     property="id"          column="id"/>
+        <result property="categoryId"  column="category_id"/>
+        <result property="slug"        column="slug"/>
+        <result property="name"        column="name"/>
+        <result property="description" column="description"/>
+        <result property="price"       column="price"/>
+        <result property="stock"       column="stock"/>
+        <result property="imageUrl"    column="image_url"/>
+    </resultMap>
+
+    <sql id="productColumns">
+        id, category_id, slug, name, description, price, stock, image_url
+    </sql>
+
+    <select id="findAll" resultMap="ProductResultMap">
+        SELECT <include refid="productColumns"/>
+        FROM products
+        ORDER BY name ASC
+    </select>
+
+    <select id="findPage" resultMap="ProductResultMap">
+        SELECT <include refid="productColumns"/>
+        FROM products
+        ORDER BY name ASC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="countAll" resultType="long">
+        SELECT COUNT(*)
+        FROM products
+    </select>
+
+    <select id="findByCategoryId" resultMap="ProductResultMap">
+        SELECT <include refid="productColumns"/>
+        FROM products
+        WHERE category_id = #{categoryId}
+        ORDER BY name ASC
+    </select>
+
+    <select id="findPageByCategoryId" resultMap="ProductResultMap">
+        SELECT <include refid="productColumns"/>
+        FROM products
+        WHERE category_id = #{categoryId}
+        ORDER BY name ASC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="countByCategoryId" resultType="long">
+        SELECT COUNT(*)
+        FROM products
+        WHERE category_id = #{categoryId}
+    </select>
+
+    <select id="findById" resultMap="ProductResultMap">
+        SELECT <include refid="productColumns"/>
+        FROM products
+        WHERE id = #{id}
+    </select>
+
+    <select id="findByIds" resultMap="ProductResultMap">
+        SELECT <include refid="productColumns"/>
+        FROM products
+        WHERE id IN
+        <foreach collection="ids" item="productId" open="(" separator="," close=")">
+            #{productId}
+        </foreach>
+        ORDER BY name ASC
+    </select>
+
+    <insert id="insert">
+        INSERT INTO products (id, category_id, slug, name, description, price, stock, image_url)
+        VALUES (#{id}, #{categoryId}, #{slug}, #{name}, #{description}, #{price}, #{stock}, #{imageUrl})
+    </insert>
+
+    <update id="update">
+        UPDATE products
+        SET category_id = #{categoryId},
+            slug        = #{slug},
+            name        = #{name},
+            description = #{description},
+            price       = #{price},
+            stock       = #{stock},
+            image_url   = #{imageUrl}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM products
+        WHERE id = #{id}
+    </delete>
+
+</mapper>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.artshop.repository.CategoryMapper">
+
+    <resultMap id="CategoryResultMap" type="com.artshop.model.entity.Category">
+        <id     property="id"      column="id"/>
+        <result property="slug"    column="slug"/>
+        <result property="name"    column="name"/>
+        <result property="tagline" column="tagline"/>
+    </resultMap>
+
+    <sql id="categoryColumns">
+        id, slug, name, tagline
+    </sql>
+
+    <select id="findAll" resultMap="CategoryResultMap">
+        SELECT <include refid="categoryColumns"/>
+        FROM categories
+        ORDER BY name ASC
+    </select>
+
+    <select id="findById" resultMap="CategoryResultMap">
+        SELECT <include refid="categoryColumns"/>
+        FROM categories
+        WHERE id = #{id}
+    </select>
+
+    <insert id="insert">
+        INSERT INTO categories (id, slug, name, tagline)
+        VALUES (#{id}, #{slug}, #{name}, #{tagline})
+    </insert>
+
+    <update id="update">
+        UPDATE categories
+        SET slug    = #{slug},
+            name    = #{name},
+            tagline = #{tagline}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM categories
+        WHERE id = #{id}
+    </delete>
+
+</mapper>

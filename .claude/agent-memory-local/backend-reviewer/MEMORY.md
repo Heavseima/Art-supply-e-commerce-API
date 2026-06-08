@@ -1,0 +1,1 @@
+- [ArtShop Project Conventions](project-artshop-conventions.md) — Layering conventions, error handler location, DTO patterns, known gaps found in 2026-06-06 review
