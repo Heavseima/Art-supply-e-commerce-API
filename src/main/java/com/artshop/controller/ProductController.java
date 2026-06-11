@@ -1,5 +1,6 @@
 package com.artshop.controller;
 
+import com.artshop.model.dto.ApiResponse;
 import com.artshop.model.dto.PagedResponse;
 import com.artshop.model.dto.ProductRequest;
 import com.artshop.model.dto.ProductResponse;
@@ -36,7 +37,7 @@ public class ProductController {
     }
 
     @GetMapping
-    public ResponseEntity<PagedResponse<ProductResponse>> listProducts(
+    public ResponseEntity<ApiResponse<PagedResponse<ProductResponse>>> listProducts(
             @RequestParam(name = "categoryId", required = false) String categoryId,
             @RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "" + DEFAULT_PAGE_SIZE) int size) {
@@ -47,34 +48,39 @@ public class ProductController {
         PagedResponse<ProductResponse> products = (categoryId == null)
                 ? productService.findAll(safePage, safeSize)
                 : productService.findByCategory(categoryId, safePage, safeSize);
-        return ResponseEntity.status(HttpStatus.OK).body(products);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(ApiResponse.success(products, "Products retrieved successfully"));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProductResponse> getProduct(@PathVariable String id) {
-        return ResponseEntity.status(HttpStatus.OK).body(productService.findById(id));
+    public ResponseEntity<ApiResponse<ProductResponse>> getProduct(@PathVariable String id) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(ApiResponse.success(productService.findById(id), "Product retrieved successfully"));
     }
 
     @PostMapping
-    public ResponseEntity<ProductResponse> createProduct(@Valid @RequestBody ProductRequest request) {
+    public ResponseEntity<ApiResponse<ProductResponse>> createProduct(@Valid @RequestBody ProductRequest request) {
         ProductResponse created = productService.create(request);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(created.id())
                 .toUri();
-        return ResponseEntity.created(location).body(created);
+        return ResponseEntity.created(location)
+                .body(ApiResponse.created(created, "Product created successfully"));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ProductResponse> updateProduct(@PathVariable String id,
+    public ResponseEntity<ApiResponse<ProductResponse>> updateProduct(@PathVariable String id,
                                                          @Valid @RequestBody ProductRequest request) {
-        return ResponseEntity.status(HttpStatus.OK).body(productService.update(id, request));
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(ApiResponse.success(productService.update(id, request), "Product updated successfully"));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProduct(@PathVariable String id) {
+    public ResponseEntity<ApiResponse<Void>> deleteProduct(@PathVariable String id) {
         productService.delete(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(ApiResponse.message("Product deleted successfully"));
     }
 
     private int clampSize(int size) {

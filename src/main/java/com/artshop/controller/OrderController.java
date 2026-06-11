@@ -1,5 +1,6 @@
 package com.artshop.controller;
 
+import com.artshop.model.dto.ApiResponse;
 import com.artshop.model.dto.OrderRequest;
 import com.artshop.model.dto.OrderResponse;
 import com.artshop.service.OrderService;
@@ -22,7 +23,8 @@ public class OrderController {
     }
 
     @PostMapping
-    public ResponseEntity<OrderResponse> placeOrder(@Valid @RequestBody OrderRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(orderService.placeOrder(request));
+    public ResponseEntity<ApiResponse<OrderResponse>> placeOrder(@Valid @RequestBody OrderRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.created(orderService.placeOrder(request), "Order placed successfully"));
     }
 }

@@ -1,5 +1,6 @@
 package com.artshop.controller;
 
+import com.artshop.model.dto.ApiResponse;
 import com.artshop.model.dto.CartValidationRequest;
 import com.artshop.model.dto.CartValidationResponse;
 import com.artshop.service.CartService;
@@ -22,8 +23,9 @@ public class CartController {
     }
 
     @PostMapping("/validate")
-    public ResponseEntity<CartValidationResponse> validateCart(
+    public ResponseEntity<ApiResponse<CartValidationResponse>> validateCart(
             @Valid @RequestBody CartValidationRequest request) {
-        return ResponseEntity.status(HttpStatus.OK).body(cartService.validate(request));
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(ApiResponse.success(cartService.validate(request), "Cart validated successfully"));
     }
 }
